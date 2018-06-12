@@ -1,6 +1,8 @@
 var request = require('request');
 var secret = require('./secrets');
 var fs = require('fs');
+var owner = process.argv.slice(2, 3);
+var repo = process.argv.slice(3);
 
 console.log('Welcome to the GitHub Avatar Downloader!');
 
@@ -13,6 +15,11 @@ function getRepoContributors(repoOwner, repoName, cb) {
       'Authorization': 'token ' + secret.GITHUB_TOKEN
     }
   };
+
+  if (!owner.length || !repo.length) {
+    console.log('Something went wrong. Please, try again.');
+    return;
+  }
 
   request(options, function(err, res, body) {
     var data = JSON.parse(body);
@@ -42,4 +49,4 @@ function downloadImageByURL(url, filePath) {
        .pipe(fs.createWriteStream(filePath));
 }
 
-getRepoContributors("jquery", "jquery", contributorInfo);
+getRepoContributors(owner, repo, contributorInfo);
